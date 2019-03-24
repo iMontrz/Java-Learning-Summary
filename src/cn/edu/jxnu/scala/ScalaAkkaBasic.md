@@ -101,7 +101,7 @@ class ShoppingCart extends Actor {
 
 ```
 
-### 路由与容错策略
+#### 路由与容错策略
 
 使用actor池与路由
 ```scala
@@ -135,6 +135,8 @@ override def supervisorStrategy: SupervisorStrategy = AllForOneStrategy(maxNrOfR
     case _: Exception => Stop
 }
 ```
+
+#### 消息模式匹配注意点
 
 向发送者回复消息
 ```scala
