@@ -4,7 +4,8 @@
     
     
     
-[源代码库 - scala-akka-learn](https://github.com/jxnu-liguobin/Java-Learning-Summary/tree/master/scala-akka-learn)
+[库 - scala-akka-learn](https://github.com/jxnu-liguobin/Java-Learning-Summary/tree/master/scala-akka-learn)
+[库 - scala-akka-crawler](https://github.com/jxnu-liguobin/scala-akka-crawler)
 
 #### 入门实例（helloworld）
 
@@ -98,6 +99,52 @@ class ShoppingCart extends Actor {
 
 }
 
+```
+
+### 路由与容错策略
+
+使用actor池与路由
+```scala
+parser = getContext().actorOf(Props.create(classOf[PageParsingActor], pageRetriever).
+withRouter(new RoundRobinPool(Constant.round_robin_pool_size)).withDispatcher("worker-dispatcher"))
+```
+配置
+```
+worker-dispatcher {
+  type = akka.dispatch.BalancingDispatcherConfigurator
+}
+```
+失败策略
+```scala
+//actor重写本方法，AllForOneStrategy，影响同级或同层所有actor，1分钟5次 。 父监控子
+override def supervisorStrategy: SupervisorStrategy = AllForOneStrategy(maxNrOfRetries = 5, Duration.create("1 minute"), true) {
+
+    //忽略
+    case _: IndexingException => {
+        Escalate
+    }
+    //重启，Restart不保留状态
+    case re: RetrievalException => {
+        Resume
+    }
+    //代理异常，忽略
+    case pe: ProxyException => {
+        Escalate
+    }
+    //其他异常
+    case _: Exception => Stop
+}
+```
+
+向发送者回复消息
+```scala
+//向发送者sender发送消息，并携带自己的ref
+sender ! (content, self)
+```
+发送者接收
+```scala
+//回复者携带了自己的ref，此时消息是一个二元组
+case (content: PageContent, _) 
 ```
 ![生命周期](https://github.com/jxnu-liguobin/Java-Learning-Summary/blob/master/scala-akka-learn/src/main/scala/cn/edu/jxnu/akka/pictures/actor1.png)
 
