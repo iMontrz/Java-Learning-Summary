@@ -2,9 +2,9 @@ apply plugin: 'java'
 apply plugin: 'maven'
 
 group = 'Java-Learning-Summary'
-version = '0.0.1-SNAPSHOT'
+version = '1.0.0-SNAPSHOT'
 
-description = """"""
+description = "Java Learning Dependency"
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
