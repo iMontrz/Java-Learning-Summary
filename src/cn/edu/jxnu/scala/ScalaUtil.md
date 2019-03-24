@@ -10,6 +10,7 @@
 * Swagger2配置
 * Spring处理拦截器 Scala实现Java接口
 * Scala时间工具
+* Scala下载URL图片
 
 #### Spring Data Redis工具 redis键值对操作
 
@@ -687,6 +688,46 @@ object DateUtil {
     def isRestday(date: String): Boolean = {
       val dayNumOfWeek = dayOfWeek(date)
       dayNumOfWeek == 6 || dayNumOfWeek == 7
+    }
+}
+```
+#### Scala下载URL图片
+
+```scala
+/**
+ *
+ * @param fileUrl 下载链接
+ * @param target  保存地址且重命名后的文件
+ */
+def downloadFile(fileUrl: String, target: String) {
+    var in: InputStream = null
+    var connection: HttpURLConnection = null
+    var out: OutputStream = null
+    try {
+
+        val url = new URL(fileUrl)
+        connection = url.openConnection().asInstanceOf[HttpURLConnection]
+        connection.setRequestMethod("GET")
+        in = connection.getInputStream
+        val fileToDownloadAs = new java.io.File(target)
+        out = new BufferedOutputStream(new FileOutputStream(fileToDownloadAs))
+        val byteArray = Stream.continually(in.read).takeWhile(-1 !=).map(_.toByte).toArray
+        out.write(byteArray)
+
+    } catch {
+        case ex: Exception => {
+            logger.info(ex.getMessage)
+        }
+    }
+    finally {
+
+        if (in != null) {
+            in.close()
+        }
+
+        if (out != null) {
+            out.close()
+        }
     }
 }
 ```
