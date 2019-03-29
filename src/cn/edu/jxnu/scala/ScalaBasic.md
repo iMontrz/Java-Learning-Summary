@@ -1173,7 +1173,7 @@ object SingletonObject {
     }
 }
 ```
-#### Scala常用算子 ####
+#### Scala 常用算子 ####
 
 ```scala
 object ScalaRDD extends App {
